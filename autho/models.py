@@ -11,22 +11,20 @@ from mixins.models import TimestampMixin
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, phone, email, password=None, **kwargs):
+    def create_user(self, email, phone=None, password=None, **kwargs):
         """
         Creates and saves a user with the given phone and password
         """
-        if not phone:
-            raise ValueError('Users must have an phone')
         user = self.model(phone=phone, email=email, **kwargs)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, phone, email, password):
+    def create_superuser(self, email, password):
         """
         Creates and saves a superuser with the given phone and password
         """
-        user = self.create_user(phone, email, password=password)
+        user = self.create_user(email, password=password)
         user.is_admin = True
         user.is_superuser = True
         user.is_moderator = True

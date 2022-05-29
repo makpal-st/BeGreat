@@ -10,7 +10,7 @@ from utils.handlers import response_code_wrapper
 
 
 @method_decorator(response_code_wrapper(), name='dispatch')
-class ProfileViewSet(viewsets.ModelViewSet):
+class ProfileViewSet(viewsets.GenericViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):

@@ -105,8 +105,9 @@ class Question(models.Model):
     )
 
     description = models.CharField(
-        max_length=100,
-        verbose_name='Описание вопроса'
+        max_length=1000,
+        verbose_name='Описание вопроса',
+        blank=True, null=True
     )
 
     priority = models.IntegerField(
@@ -191,6 +192,11 @@ class MultiTest(TimestampMixin):
         verbose_name='Результат'
     )
 
+    is_finished = models.BooleanField(
+        default=False,
+        verbose_name='Закончен?'
+    )
+
     def __str__(self):
         return f'Мультитест для - {self.user}'
 
@@ -226,9 +232,10 @@ class QuestionAnswer(TimestampMixin):
     )
 
     type = models.CharField(
+        choices=TYPES,
         max_length=50,
         default=TEST,
-        verbose_name='Тип ответа'
+        verbose_name='Тип ответа',
     )
 
     attempt_counter = models.IntegerField(

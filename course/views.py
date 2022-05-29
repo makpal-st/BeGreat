@@ -12,7 +12,7 @@ from rest_framework.exceptions import ValidationError
 from course.models import Course, Category, Question, Lecture, MultiTest
 from course.serializers import CourseSerializer, JoinCourseSerializer, CategorySerializer, UserCourseSerializer, \
     QuestionSerializer, LectureSerializer, NoteSerializer, AnswerSubmitSerializer, AnswerResultSerializer, \
-    MultitestAnswerSubmitSerializer
+    MultitestAnswerSubmitSerializer, UserAchievementSerializer
 from utils.handlers import response_code_wrapper
 from utils.pagination import CategoryPagination
 
@@ -79,7 +79,7 @@ class CourseLecturesViewSet(
 
     def get_serializer_class(self):
         if self.action == 'lecture_materials':
-            return None
+            return LectureSerializer
         return None
 
     @extend_schema(
@@ -100,7 +100,6 @@ class CourseLecturesViewSet(
 class LectureNoteViewSet(
     viewsets.GenericViewSet
 ):
-    # permission_classes = (IsAuthenticated, )
 
     def get_serializer_class(self):
         if self.action == 'post_note':
@@ -176,6 +175,8 @@ class MultitestViewSet(viewsets.GenericViewSet):
             return None
         elif self.action == 'submit_answer':
             return MultitestAnswerSubmitSerializer
+        elif self.action == 'get_result':
+            return UserAchievementSerializer
         return QuestionSerializer
 
     def generate(self, request, *args, **kwargs):
@@ -205,9 +206,9 @@ class MultitestViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data, context={'request': request, 'category_id': category_id})
         serializer.is_valid(raise_exception=True)
         response = check_answer(self.request.user, **serializer.validated_data)
-        multi_test = MultiTest.objects.filter(user=self.request.user).first()
         return Response(AnswerResultSerializer(response).data)
 
     def get_result(self, request, *args, **kwargs):
-        # TODO
-        return Response()
+        from course.services import get_result_of_multitest
+        achievement = get_result_of_multitest(self.request.user)
+        return Response(self.get_serializer(achievement, many=True).data)

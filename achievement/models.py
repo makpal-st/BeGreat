@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from course.models import MultiTest
 from mixins.models import TimestampMixin, IsActiveMixin
 from utils.services import prize_upload
 from utils.validators import validate_pdf
@@ -52,7 +53,7 @@ class Achievement(IsActiveMixin):
     )
 
     def __str__(self):
-        return f'{self.title}'
+        return f'{self.title} - {self.type}'
 
 
 class UserAchievement(TimestampMixin):
@@ -69,7 +70,16 @@ class UserAchievement(TimestampMixin):
         on_delete=models.CASCADE,
         verbose_name='Достижение'
     )
+    multitest = models.ForeignKey(
+        MultiTest,
+        on_delete=models.CASCADE,
+        verbose_name='Тест за которого юзер получил достижение',
+        null=True,
+    )
 
     class Meta:
         verbose_name = 'Достижение пользователя'
         verbose_name_plural = 'Достижении пользователей'
+
+    def __str__(self):
+        return f'{self.user} - {self.achievement.type}'

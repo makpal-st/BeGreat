@@ -81,7 +81,7 @@ class JWTScheme(OpenApiAuthenticationExtension):
         return {
             'type': 'apiKey',
             'in': 'header',
-            'name': 'Auth-Token',
+            'name': 'Authorization',
             'description': 'Token value'
         }
 

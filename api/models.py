@@ -7,7 +7,7 @@ class Image(models.Model):
 
     class Meta:
         verbose_name = 'Изображение'
-        verbose_name_plural = 'Изображения'
+        verbose_name_plural = 'Изображении'
 
     title = models.CharField(
         max_length=50,
